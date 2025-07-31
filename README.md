@@ -4,11 +4,11 @@
 
 开发灵感来源于构建一个能抵御信息过载的“结界”。
 
-!(https://github.com/rewrz/smart_rss_service/blob/main/preview1.jpeg?raw=true)
+![1](https://github.com/rewrz/smart_rss_service/blob/main/preview1.jpeg?raw=true)
 
-!(https://github.com/rewrz/smart_rss_service/blob/main/preview2.jpeg?raw=true)
+![2](https://github.com/rewrz/smart_rss_service/blob/main/preview2.jpeg?raw=true)
 
-!(https://github.com/rewrz/smart_rss_service/blob/main/preview3.jpeg?raw=true)
+![3](https://github.com/rewrz/smart_rss_service/blob/main/preview3.jpeg?raw=true)
 
 ## 核心特性
 
