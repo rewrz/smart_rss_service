@@ -4,6 +4,12 @@
 
 开发灵感来源于构建一个能抵御信息过载的“结界”。
 
+!(https://github.com/rewrz/smart_rss_service/blob/main/preview1.jpeg?raw=true)
+
+!(https://github.com/rewrz/smart_rss_service/blob/main/preview2.jpeg?raw=true)
+
+!(https://github.com/rewrz/smart_rss_service/blob/main/preview3.jpeg?raw=true)
+
 ## 核心特性
 
 *   **多源聚合**: 支持添加任意数量的 RSS 订阅源。
@@ -120,7 +126,7 @@
 
 ## 项目作者
 
-*   **博客**: https://rewrz.com
+*   **博客**: https://rewrz.com/archive/llm-rss-cleaner
 *   **GitHub**: @rewrz
 
 ## 许可
