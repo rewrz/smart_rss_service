@@ -1,0 +1,42 @@
+{
+  "source_feeds": [
+    {
+      "name": "月光博客",
+      "url": "https://www.williamlong.info/rss.xml"
+    },
+    {
+      "name": "纽约时报双语版",
+      "url": "https://feedx.net/rss/nytimesdual.xml"
+    },
+    {
+      "name": "IT之家",
+      "url": "https://www.ithome.com/rss/"
+    },
+    {
+      "name": "百度实时热点",
+      "url": "https://rss.aishort.top/?type=baidu"
+    },
+    {
+      "name": "瓦斯阅读（公众号热点）",
+      "url": "https://rss.aishort.top/?type=wasi"
+    }
+  ],
+  "user_interests": "关于动漫、IT、游戏、小说、网站、写作、数码科技、电子产品、摄影、人工智能、大语言模型、易经、紫微斗数、小六壬、六爻、阳宅、命相、中医等的文章",
+  "priority_keywords": [
+    "自然灾害",
+    "域名价格"
+  ],
+  "output_file": "smart_rss.xml",
+  "server_port": 8000,
+  "update_interval_hours": 1,
+  "llm_api_endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+  "llm_model_name": "glm-4-flash-250414",
+  "output_feed_details": {
+    "title": "来自「我的信息结界」的情报",
+    "link": "http://localhost:8000",
+    "description": "由专属AI守护，过滤全网信息，只为你呈现最核心的内容。"
+  },
+  "priority_max_days": 3,
+  "interest_max_days": 3,
+  "cache_retention_days": 30
+}

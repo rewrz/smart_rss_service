@@ -1,0 +1,10 @@
+feedparser
+feedgen
+Flask
+python-dotenv
+requests
+Flask-WTF
+pytz
+waitress; sys_platform == "win32"
+gunicorn; sys_platform != "win32"
+APScheduler

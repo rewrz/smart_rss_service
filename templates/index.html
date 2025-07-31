@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的信息结界</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            /* 初始时使用静态图片作为背景 */
+            background: url("{{ url_for('static', filename='background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden; /* 避免滚动条 */
+        }
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            object-fit: cover; /* 保证视频铺满屏幕 */
+            display: none; /* 初始时隐藏视频 */
+        }
+        #enter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease-in-out;
+            cursor: pointer;
+        }
+        #enter-button {
+            padding: 1em 2.5em;
+            font-size: 1.5em;
+            color: white;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        #enter-button:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: black;
+            text-shadow: none;
+        }
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* 将内容垂直排列 */
+            min-height: 100%; /* 确保内容区域至少占据整个视口高度 */
+            padding: 20px; /* 添加一些内边距，防止内容贴边 */
+            box-sizing: border-box; /* 确保内边距包含在元素总宽度和高度之内 */
+
+            height: 100%;
+            text-align: center;
+            opacity: 0; /* 初始时隐藏 */
+            transition: opacity 1s ease-in-out;
+        }
+        .container {
+            max-width: 700px;
+            width: 90%;
+            padding: 1em;
+            border-radius: 16px;
+             max-height: 70vh; /* 限制容器的最大高度为视口高度的70% */
+            overflow-y: auto; /* 允许内容在容器内滚动 */
+            margin-bottom: 20px; /* 增加一些底部外边距，与“进入结界”按钮分开 */
+
+            
+            /* 毛玻璃效果核心 */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); /* 兼容Safari */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+            /* 隐藏滚动条的核心CSS */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+        }
+        /* For Chrome, Safari and Opera */
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+        h1,h2,h3,h4,h5,h6 {
+            font-size: 2.8em;
+            color: #ffffff;
+            margin-bottom: 0.5em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        p {
+            font-size: 1.2em;
+            color: #e0e0e0;
+            line-height: 1.6;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .feed-box {
+            margin-top: 2.5em;
+            padding: 1.5em;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .feed-box p { margin: 0; font-size: 1em; color: #f0f0f0; }
+        .feed-box code {
+            display: block;
+            margin-top: 0.5em;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 0.5em;
+            border-radius: 4px;
+            font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+            color: #a5d6ff; /* 浅蓝色，科技感 */
+            word-wrap: break-word;
+        }
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 1.5em;
+            padding: 0.8em 2em;
+            background-color: rgba(0, 123, 255, 0.7);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .button:hover { background-color: rgba(0, 123, 255, 1); transform: translateY(-2px); }
+        .nav { position: absolute; top: 20px; right: 20px; }
+        .nav a { text-decoration: none; color: #ffffff; margin-left: 1.5em; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+    <!-- 视频不再静音，等待用户交互后播放 -->
+    <video loop id="bg-video">
+        <!-- 使用 url_for('static', ...) 来引用本地视频文件 -->
+        <source src="{{ url_for('static', filename='background.mp4') }}" type="video/mp4">
+        你的浏览器不支持视频标签。
+    </video>
+
+    <!-- "进入结界" 遮罩层 -->
+    <div id="enter-overlay">
+        <button id="enter-button">进入结界</button>
+    </div>
+
+    <div class="nav">
+        {% if 'logged_in' in session %}
+            <a href="{{ url_for('settings') }}">设置</a>
+            <a href="{{ url_for('logout') }}">退出</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">登录</a>
+        {% endif %}
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>欢迎来到我的信息结界</h1>
+            <p>这是终极改写(RewrZ.com)的专属信息领域。每个人都可以使用AI为自己守护结界，过滤万千资讯，只留下自己所钟爱的情报，构筑一个纯净、无噪音的阅读空间。</p>
+            
+            {% if feed_exists %}
+                <div class="feed-box">
+                    <p>专属RSS订阅链接已生成：</p>
+                    <code>{{ feed_url }}</code>、
+                    <p>本项目 Github 链接：</p>
+                    <code>https://github.com/RewrZ/smart_rss_service</code>
+                </div>
+                <a href="{{ feed_url }}" class="button">查看我的订阅</a>
+            {% else %}
+                <div class="feed-box">
+                    <p>专属RSS订阅链接尚未生成。</p>
+                </div>
+                <a href="{{ url_for('settings') }}" class="button">前往设置并生成</a>
+            {% endif %}
+        </div>
+        {% if articles %}
+        <div class="container">
+            <h2>最新动态</h2>
+            <ul style="list-style: none; padding: 0;">
+                {% for article in articles %}
+                    <li style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+                        <a href="{{ article.link }}" style="color: #fff; text-decoration: none;">
+                            {{ article.title }}
+                        </a>
+                        <br>
+                        <small style="color: #bbb;">
+                            {% if article.published_parsed %}
+                                {{ strftime('%Y-%m-%d %H:%M:%S', article.published_parsed) }}
+                            {% else %}
+                                发布时间未知
+                            {% endif %}
+                        </small>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+      {% if  feed_exists %}
+        <div class="container">
+              还没有新的文章，请稍等片刻
+        </div>
+      {% endif %}
+    {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('enter-overlay');
+            const enterButton = document.getElementById('enter-button');
+            const bgVideo = document.getElementById('bg-video');
+            const mainContent = document.querySelector('.main-content');
+
+            enterButton.addEventListener('click', () => {
+                // 关键修复：移除body的背景图片，让下层的视频露出来
+                document.body.style.backgroundImage = 'none';
+
+                // 然后再显示并播放视频
+                bgVideo.style.display = 'block';
+                bgVideo.play().catch(error => {
+                    console.error("视频播放失败:", error);
+                });
+
+                // 淡出遮罩层
+                overlay.style.opacity = '0';
+                // 淡入主内容
+                mainContent.style.opacity = '1';
+                
+                // 在动画结束后移除遮罩层，使其不再响应点击
+                setTimeout(() => { overlay.style.display = 'none'; }, 800);
+            });
+        });
+    </script>
+</body>
+</html>

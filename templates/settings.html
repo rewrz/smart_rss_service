@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>结界核心设置 - 我的信息结界</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --text-color: #212529;
+            --text-muted-color: #6c757d;
+            --border-color: #dee2e6;
+            --success-bg: #d1e7dd;
+            --success-text: #0f5132;
+            --success-border: #badbcc;
+            --error-bg: #f8d7da;
+            --error-text: #842029;
+            --error-border: #f5c2c7;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 2em;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: var(--surface-color);
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+        }
+        h1 { color: #444; }
+        .flash {
+            padding: 1em;
+            margin-bottom: 1.5em;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+        .flash.success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border-color: var(--success-border);
+        }
+        .flash.error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border-color: var(--error-border);
+        }
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5em;
+            margin-bottom: 2em;
+        }
+        legend {
+            font-weight: 600;
+            font-size: 1.2em;
+            padding: 0 0.5em;
+            color: var(--text-color);
+        }
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+        }
+        input[type="text"], input[type="password"], input[type="number"], textarea {
+            width: 100%;
+            padding: 0.8em;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            background-color: #fdfdff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        textarea { height: 120px; resize: vertical; }
+        .help-text {
+            font-size: 0.9em;
+            color: var(--text-muted-color);
+            margin-top: 0.3em;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+        }
+        .form-actions {
+            text-align: right;
+            margin-top: 2em;
+        }
+        .button, input[type="submit"], button[type="button"] {
+            padding: 0.8em 1.5em;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .button:hover, input[type="submit"]:hover, button[type="button"]:hover {
+            background-color: var(--primary-hover-color);
+        }
+        .button-secondary {
+            background-color: #6c757d;
+        }
+        .button-secondary:hover {
+            background-color: #5a6268;
+        }
+        .feed-actions {
+            margin-top: 1em;
+        }
+        #verify-results ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 1em;
+        }
+        #verify-results li {
+            padding: 0.5em;
+            border-radius: 4px;
+            margin-bottom: 0.5em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-valid { background-color: var(--success-bg); color: var(--success-text); }
+        .status-invalid { background-color: var(--error-bg); color: var(--error-text); }
+        .status-badge { font-weight: bold; }
+        .feed-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr auto;
+            gap: 1em;
+            align-items: center;
+            margin-bottom: 1em;
+        }
+        .button-remove {
+            background-color: #dc3545;
+            padding: 0.8em;
+        }
+        .button-remove:hover {
+            background-color: #c82333;
+        }
+        fieldset.danger-zone {
+            border-color: #dc3545;
+            margin-top: 2em;
+        }
+        fieldset.danger-zone legend {
+            color: #dc3545;
+        }
+        .danger-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5em;
+        }
+        .danger-content p {
+            margin: 0;
+        }
+        .button-danger {
+            background-color: #dc3545;
+        }
+        .button-danger:hover { background-color: #c82333; }
+
+        @media (max-width: 768px) {
+            body { padding: 1em; }
+            .container { padding: 1.5em; }
+            .grid-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>结界·核心设置</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('settings') }}">
+            {{ form.csrf_token }}
+
+            <fieldset>
+                <legend>基础配置</legend>
+                <div class="form-group">
+                    <label>RSS订阅源</label>
+                    <div id="feed-list">
+                        {% for feed in config.source_feeds %}
+                        <div class="feed-item">
+                            <input type="text" name="feed_name" placeholder="订阅源名称" value="{{ feed.name }}" required>
+                            <input type="text" name="feed_url" placeholder="订阅源URL" value="{{ feed.url }}" required>
+                            <button type="button" class="button-remove" onclick="removeFeed(this)">移除</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="feed-actions">
+                        <button type="button" class="button-secondary" onclick="addFeed()">添加订阅源</button>
+                        <button type="button" id="verify-btn" class="button-secondary" onclick="verifyAllFeeds()">检查全部有效性</button>
+                    </div>
+                    <div id="verify-results"></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>AI 筛选规则</legend>
+                <div class="form-group">
+                    <label for="user_interests">我的兴趣</label>
+                    <div class="help-text">详细描述你感兴趣的话题，AI将根据此描述进行筛选。</div>
+                    <textarea id="user_interests" name="user_interests" required>{{ config.user_interests }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="priority_keywords">优先关注关键词</label>
+                    <div class="help-text">AI会优先保留与这些关键词高度相关的内容，每行一个。</div>
+                    <textarea id="priority_keywords" name="priority_keywords">{{ config.get('priority_keywords', []) | join('\n') }}</textarea>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>内容时效性</legend>
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label for="priority_max_days">优先内容保留天数</label>
+                        <input type="number" id="priority_max_days" name="priority_max_days" value="{{ config.get('priority_max_days', 30) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interest_max_days">普通兴趣内容保留天数</label>
+                        <input type="number" id="interest_max_days" name="interest_max_days" value="{{ config.get('interest_max_days', 3) }}" required>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>高级设置</legend>
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label for="update_interval_hours">自动更新频率 (小时)</label>
+                        <input type="number" id="update_interval_hours" name="update_interval_hours" value="{{ config.get('update_interval_hours', 1) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cache_retention_days">文章缓存天数</label>
+                        <input type="number" id="cache_retention_days" name="cache_retention_days" value="{{ config.get('cache_retention_days', 30) }}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="llm_api_endpoint">大模型API地址 (Endpoint)</label>
+                    <input type="text" id="llm_api_endpoint" name="llm_api_endpoint" value="{{ config.llm_api_endpoint }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="llm_model_name">模型名称 (Model Name)</label>
+                    <input type="text" id="llm_model_name" name="llm_model_name" value="{{ config.get('llm_model_name', 'local-model') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="api_key">API密钥 (Key)</label>
+                    <div class="help-text">你的API密钥。留空则表示不修改已有的密钥。</div>
+                    <input type="password" id="api_key" name="api_key" placeholder="如需更新，请在此输入新的密钥">
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <input type="submit" class="button" value="保存并立即更新">
+            </div>
+        </form>
+
+        <fieldset class="danger-zone">
+            <legend>危险区域</legend>
+            <div class="danger-content">
+                <div>
+                    <p><strong>清除文章缓存</strong></p>
+                    <p class="help-text">这将删除所有已处理文章的记录。下次更新时，系统将重新抓取并处理所有符合时间范围的文章，这可能会消耗较多的LLM API额度。此操作无法撤销。</p>
+                </div>
+                <form method="POST" action="{{ url_for('clear_cache') }}" onsubmit="return confirm('你确定要清除所有文章缓存吗？这个操作无法撤销。');">
+                    {{ clear_cache_form.hidden_tag() }}
+                    <button type="submit" class="button button-danger">清除缓存</button>
+                </form>
+            </div>
+        </fieldset>
+
+        <p style="text-align: center; margin-top: 2em;"><a href="{{ url_for('index') }}">返回主页</a> | <a href="#" onclick="document.getElementById('update-form').submit(); return false;">手动更新</a> | <a href="{{ url_for('logout') }}">退出登录</a></p>
+        <form id="update-form" action="{{ url_for('trigger_update') }}" method="post" style="display: none;">
+            {{ update_form.csrf_token }}
+        </form>
+    <script>
+        function addFeed() {
+            const feedList = document.getElementById('feed-list');
+            const newItem = document.createElement('div');
+            newItem.className = 'feed-item';
+            newItem.innerHTML = `
+                <input type="text" name="feed_name" placeholder="订阅源名称" required>
+                <input type="text" name="feed_url" placeholder="订阅源URL" required>
+                <button type="button" class="button-remove" onclick="removeFeed(this)">移除</button>
+            `;
+            feedList.appendChild(newItem);
+        }
+
+        function removeFeed(button) {
+            button.parentElement.remove();
+        }
+
+        function verifyAllFeeds() {
+            const verifyBtn = document.getElementById('verify-btn');
+            const resultsDiv = document.getElementById('verify-results');
+            const feedItems = document.querySelectorAll('.feed-item');
+            const urls = Array.from(feedItems).map(item => item.querySelector('input[name="feed_url"]').value.trim()).filter(url => url);
+
+            if (urls.length === 0) {
+                resultsDiv.innerHTML = '<p>请输入至少一个订阅源地址。</p>';
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '检查中...';
+            resultsDiv.innerHTML = '';
+
+            fetch("{{ url_for('verify_feeds_route') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ form.csrf_token._value() }}'
+                },
+                body: JSON.stringify({ urls: urls })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultsHTML = '<ul>';
+                let invalidUrls = [];
+                for (const url in data) {
+                    const isValid = data[url];
+                    resultsHTML += `<li class="${isValid ? 'status-valid' : 'status-invalid'}">`;
+                    resultsHTML += `<span>${url}</span>`;
+                    resultsHTML += `<span class="status-badge">${isValid ? '有效' : '失效'}</span>`;
+                    resultsHTML += `</li>`;
+                    if (!isValid) {
+                        invalidUrls.push(url);
+                    }
+                }
+                resultsHTML += '</ul>';
+                if (invalidUrls.length > 0) {
+                    resultsHTML += `<button type="button" class="button-remove" onclick='removeInvalidFeeds(${JSON.stringify(invalidUrls)})'>一键移除所有失效链接</button>`;
+                }
+                resultsDiv.innerHTML = resultsHTML;
+            })
+            .finally(() => {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = '检查有效性';
+            });
+        }
+
+        function removeInvalidFeeds(invalidUrls) {
+            const feedItems = document.querySelectorAll('.feed-item');
+            feedItems.forEach(item => {
+                const urlInput = item.querySelector('input[name="feed_url"]');
+                if (invalidUrls.includes(urlInput.value.trim())) {
+                    item.remove();
+                }
+            });
+            document.getElementById('verify-results').innerHTML = '<p>失效链接已移除。</p>';
+        }
+    </script>
+    </div>
+</body>
+</html>

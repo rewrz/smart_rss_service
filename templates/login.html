@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 我的信息结界</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 2em; background-color: #f4f4f9; color: #333; display: flex; align-items: center; justify-content: center; height: 80vh; }
+        .container { max-width: 400px; width: 100%; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #444; }
+        .flash { padding: 1em; margin-bottom: 1em; border-radius: 4px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        label { display: block; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="password"] { width: 100%; padding: 0.8em; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="submit"] { width: 100%; margin-top: 2em; padding: 0.8em 1.5em; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        input[type="submit"]:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>登录</h1>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}{% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post">
+            {{ form.csrf_token }}
+            <label for="password">密码</label>
+            {{ form.password(size=20) }}
+            <input type="submit" value="登录">
+        </form>
+    </div>
+</body>
+</html>
